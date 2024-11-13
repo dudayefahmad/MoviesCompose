@@ -1,4 +1,4 @@
-package com.ahmaddudayef
+package com.ahmaddudayef.moviescompose
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -27,8 +28,17 @@ android {
         val properties = Properties()
         properties.load(keystoreFile.inputStream())
 
-        buildConfigField("String", "TMDB_BASE_URL", properties.getProperty("TMDB_BASE_URL"))
-        buildConfigField("String", "TMDB_API_KEY", properties.getProperty("TMDB_API_KEY"))
+        buildConfigField(
+            "String",
+            "TMDB_BASE_URL",
+            "\"${properties.getProperty("TMDB_BASE_URL")}\""
+        )
+        buildConfigField("String", "TMDB_API_KEY", "\"${properties.getProperty("TMDB_API_KEY")}\"")
+        buildConfigField(
+            "String",
+            "TMDB_IMAGE_URL",
+            "\"${properties.getProperty("TMDB_IMAGE_URL")}\""
+        )
     }
 
     buildTypes {
@@ -51,9 +61,6 @@ android {
         compose = true
         buildConfig = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -65,6 +72,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.compose.lifecycle.viewmodel)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -81,12 +89,17 @@ dependencies {
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
     implementation(libs.moshi.adapter)
+    ksp(libs.moshi.kotlin.codegen)
 
     implementation(libs.room.ktx)
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
 
     implementation(libs.compose.coil)
+
+    implementation(libs.androidx.navigation.compose)
+    testImplementation(libs.androidx.navigation.testing)
+    implementation(libs.compose.hilt.navigation)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -51,7 +51,11 @@ fun MoviesComposeApp(
                 MovieScreen()
             }
             composable(Screen.Profile.route) {
-                ProfileScreen()
+                ProfileScreen(
+                    userName = stringResource(R.string.profile_name),
+                    userEmail = stringResource(R.string.email),
+                    userImageUrl = stringResource(R.string.profile_photo)
+                )
             }
         }
     }

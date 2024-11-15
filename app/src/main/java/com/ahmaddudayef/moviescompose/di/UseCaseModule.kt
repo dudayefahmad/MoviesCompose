@@ -1,6 +1,7 @@
 package com.ahmaddudayef.moviescompose.di
 
 import com.ahmaddudayef.moviescompose.domain.repository.MovieRepository
+import com.ahmaddudayef.moviescompose.domain.usecase.GetDetailMovieUseCase
 import com.ahmaddudayef.moviescompose.domain.usecase.GetMoviesUseCase
 import dagger.Module
 import dagger.Provides
@@ -14,9 +15,17 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetProductsUseCase(
+    fun provideGetMoviesUseCase(
         repository: MovieRepository
     ): GetMoviesUseCase {
         return GetMoviesUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetDetailMovieUseCase(
+        repository: MovieRepository
+    ): GetDetailMovieUseCase {
+        return GetDetailMovieUseCase(repository)
     }
 }

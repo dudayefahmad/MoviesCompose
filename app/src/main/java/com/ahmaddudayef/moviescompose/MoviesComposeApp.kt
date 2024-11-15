@@ -16,12 +16,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.ahmaddudayef.moviescompose.ui.navigation.NavigationItem
 import com.ahmaddudayef.moviescompose.ui.navigation.Screen
+import com.ahmaddudayef.moviescompose.ui.screens.detail.DetailMovieScreen
 import com.ahmaddudayef.moviescompose.ui.screens.movie.MovieScreen
 import com.ahmaddudayef.moviescompose.ui.screens.profile.ProfileScreen
 import com.ahmaddudayef.moviescompose.ui.theme.MoviesComposeTheme
@@ -36,7 +39,7 @@ fun MoviesComposeApp(
 
     Scaffold(
         bottomBar = {
-            if (currentState != Screen.DetailMovies.route) {
+            if (currentState != Screen.DetailMovie.route) {
                 BottomBar(navController)
             }
         },
@@ -48,7 +51,23 @@ fun MoviesComposeApp(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Movies.route) {
-                MovieScreen()
+                MovieScreen(
+                    navigateToDetail = { movieId ->
+                        navController.navigate(Screen.DetailMovie.createRoute(movieId))
+                    }
+                )
+            }
+            composable(
+                route = Screen.DetailMovie.route,
+                arguments = listOf(navArgument("movieId") { type = NavType.LongType }),
+            ) {
+                val id = it.arguments?.getLong("movieId") ?: -1L
+                DetailMovieScreen(
+                    movieId = id,
+                    navigateBack = {
+                        navController.navigateUp()
+                    },
+                )
             }
             composable(Screen.Profile.route) {
                 ProfileScreen(

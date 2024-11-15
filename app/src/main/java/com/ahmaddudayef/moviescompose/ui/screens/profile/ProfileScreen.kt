@@ -40,7 +40,7 @@ fun ProfileScreen(
             .padding(16.dp)
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Center
     ) {
         ProfileImage(userImageUrl)
         Spacer(modifier = Modifier.height(16.dp))

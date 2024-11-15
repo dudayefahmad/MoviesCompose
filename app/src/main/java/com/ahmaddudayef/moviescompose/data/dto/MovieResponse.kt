@@ -39,8 +39,6 @@ fun MovieDto.toMovie(): Movie {
         id = id.toString(),
         title = title,
         posterUrl = "https://image.tmdb.org/t/p/w500$posterPath",
-        overview = overview,
-        releaseDate = releaseDate,
         rating = voteAverage.toFloat()
     )
 }

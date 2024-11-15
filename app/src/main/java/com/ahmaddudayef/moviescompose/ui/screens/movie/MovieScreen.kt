@@ -8,6 +8,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,7 +50,9 @@ import com.ahmaddudayef.moviescompose.ui.components.ErrorScreen
 
 @Composable
 fun MovieScreen(
-    modifier: Modifier = Modifier, viewModel: MovieViewModel = hiltViewModel()
+    modifier: Modifier = Modifier,
+    viewModel: MovieViewModel = hiltViewModel(),
+    navigateToDetail: (Long) -> Unit,
 ) {
     val movieState by viewModel.movieState.collectAsStateWithLifecycle()
     when (movieState) {
@@ -66,7 +69,11 @@ fun MovieScreen(
         }
 
         is UiState.Success -> {
-            MovieContent((movieState as UiState.Success<List<Movie>>).data)
+            MovieContent(
+                (movieState as UiState.Success<List<Movie>>).data,
+                modifier = modifier,
+                navigateToDetail,
+            )
         }
 
         is UiState.Error -> {
@@ -81,7 +88,9 @@ fun MovieScreen(
 
 @Composable
 private fun MovieContent(
-    listMovie: List<Movie>, modifier: Modifier = Modifier
+    listMovie: List<Movie>,
+    modifier: Modifier = Modifier,
+    navigateToDetail: (Long) -> Unit,
 ) {
     val visibleState = remember {
         MutableTransitionState(false).apply {
@@ -109,11 +118,17 @@ private fun MovieContent(
                     posterUrl = movie.posterUrl,
                     modifier = Modifier
                         .padding(horizontal = 8.dp, vertical = 8.dp)
-                        .animateEnterExit(enter = slideInVertically(animationSpec = spring(
-                            stiffness = StiffnessVeryLow,
-                            dampingRatio = DampingRatioLowBouncy
-                        ), initialOffsetY = { it * (index + 1) } // staggered entrance
-                        )))
+                        .animateEnterExit(enter = slideInVertically(
+                            animationSpec = spring(
+                                stiffness = StiffnessVeryLow,
+                                dampingRatio = DampingRatioLowBouncy
+                            ),
+                            initialOffsetY = { it * (index + 1) } // staggered entrance,
+                        ))
+                        .clickable {
+                            navigateToDetail(movie.id.toLong())
+                        }
+                )
             }
         }
     }

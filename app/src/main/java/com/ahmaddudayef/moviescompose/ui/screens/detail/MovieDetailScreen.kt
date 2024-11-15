@@ -135,6 +135,11 @@ fun DetailMovieContent(
                 }
                 Text(
                     text = "Rating: $rating",
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Justify,
+                )
+                Text(
+                    text = "Release Date: $releaseDate",
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Justify,
                 )
@@ -144,11 +149,6 @@ fun DetailMovieContent(
                         fontWeight = FontWeight.ExtraBold
                     ),
                     color = MaterialTheme.colorScheme.secondary
-                )
-                Text(
-                    text = "Release Data: $releaseDate",
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Justify,
                 )
             }
         }

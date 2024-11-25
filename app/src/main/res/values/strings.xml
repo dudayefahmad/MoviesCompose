@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">MoviesCompose</string>
-    <string name="menu_movies">Movies</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_explore">Explore</string>
     <string name="menu_profile">Profile</string>
     <string name="profile_name">Ahmad Dudayef</string>
     <string name="profile_image">Profile Image</string>

@@ -3,7 +3,8 @@ package com.ahmaddudayef.moviescompose
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -25,6 +26,7 @@ import androidx.navigation.navArgument
 import com.ahmaddudayef.moviescompose.ui.navigation.NavigationItem
 import com.ahmaddudayef.moviescompose.ui.navigation.Screen
 import com.ahmaddudayef.moviescompose.ui.screens.detail.DetailMovieScreen
+import com.ahmaddudayef.moviescompose.ui.screens.explore.ExploreScreen
 import com.ahmaddudayef.moviescompose.ui.screens.movie.MovieScreen
 import com.ahmaddudayef.moviescompose.ui.screens.profile.ProfileScreen
 import com.ahmaddudayef.moviescompose.ui.theme.MoviesComposeTheme
@@ -47,10 +49,10 @@ fun MoviesComposeApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Movies.route,
+            startDestination = Screen.Home.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.Movies.route) {
+            composable(Screen.Home.route) {
                 MovieScreen(
                     navigateToDetail = { movieId ->
                         navController.navigate(Screen.DetailMovie.createRoute(movieId))
@@ -76,6 +78,9 @@ fun MoviesComposeApp(
                     userImageUrl = stringResource(R.string.profile_photo)
                 )
             }
+            composable(Screen.Explore.route) {
+                ExploreScreen()
+            }
         }
     }
 
@@ -94,9 +99,14 @@ fun BottomBar(
 
         val navigationItems = listOf(
             NavigationItem(
-                title = stringResource(R.string.menu_movies),
-                icon = Icons.Default.PlayArrow,
-                screen = Screen.Movies
+                title = stringResource(R.string.menu_home),
+                icon = Icons.Default.Home,
+                screen = Screen.Home
+            ),
+            NavigationItem(
+                title = stringResource(R.string.menu_explore),
+                icon = Icons.Default.Search,
+                screen = Screen.Explore
             ),
             NavigationItem(
                 title = stringResource(R.string.menu_profile),

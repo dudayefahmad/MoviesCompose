@@ -28,9 +28,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -53,6 +57,37 @@ fun MovieScreen(
     modifier: Modifier = Modifier,
     viewModel: MovieViewModel = hiltViewModel(),
     navigateToDetail: (Long) -> Unit,
+) {
+    val selectedTab = remember { mutableStateOf(0) }
+    val tabs = listOf(
+        stringResource(R.string.movie_tab_title),
+        stringResource(R.string.tv_show_tab_title)
+    )
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        TabRow(
+            selectedTabIndex = selectedTab.value,
+        ) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    text = { Text(title) },
+                    selected = selectedTab.value == index,
+                    onClick = { selectedTab.value = index }
+                )
+            }
+        }
+        when (selectedTab.value) {
+            0 -> MovieContentScreen(viewModel, navigateToDetail)
+            1 -> TvShowContentScreen(viewModel, navigateToDetail)
+        }
+    }
+}
+
+@Composable
+fun MovieContentScreen(
+    viewModel: MovieViewModel,
+    navigateToDetail: (Long) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val movieState by viewModel.movieState.collectAsStateWithLifecycle()
     when (movieState) {
@@ -84,6 +119,15 @@ fun MovieScreen(
             )
         }
     }
+}
+
+@Composable
+fun TvShowContentScreen(
+    viewModel: MovieViewModel,
+    navigateToDetail: (Long) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Text(text = "Tv Show Content Screen")
 }
 
 @Composable

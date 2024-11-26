@@ -25,9 +25,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ahmaddudayef.moviescompose.ui.navigation.NavigationItem
 import com.ahmaddudayef.moviescompose.ui.navigation.Screen
-import com.ahmaddudayef.moviescompose.ui.screens.detail.DetailMovieScreen
+import com.ahmaddudayef.moviescompose.ui.screens.detail.DetailScreen
 import com.ahmaddudayef.moviescompose.ui.screens.explore.ExploreScreen
-import com.ahmaddudayef.moviescompose.ui.screens.movie.MovieScreen
+import com.ahmaddudayef.moviescompose.ui.screens.home.HomeScreen
 import com.ahmaddudayef.moviescompose.ui.screens.profile.ProfileScreen
 import com.ahmaddudayef.moviescompose.ui.theme.MoviesComposeTheme
 
@@ -41,7 +41,7 @@ fun MoviesComposeApp(
 
     Scaffold(
         bottomBar = {
-            if (currentState != Screen.DetailMovie.route) {
+            if (currentState != Screen.DetailContent.route) {
                 BottomBar(navController)
             }
         },
@@ -53,19 +53,26 @@ fun MoviesComposeApp(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) {
-                MovieScreen(
-                    navigateToDetail = { movieId ->
-                        navController.navigate(Screen.DetailMovie.createRoute(movieId))
+                HomeScreen(
+                    navigateToDetail = { id, contentType ->
+                        navController.navigate(
+                            Screen.DetailContent.createRoute(id, contentType),
+                        )
                     }
                 )
             }
             composable(
-                route = Screen.DetailMovie.route,
-                arguments = listOf(navArgument("movieId") { type = NavType.LongType }),
+                route = Screen.DetailContent.route,
+                arguments = listOf(
+                    navArgument("id") { type = NavType.LongType },
+                    navArgument("contentType") { type = NavType.StringType },
+                ),
             ) {
-                val id = it.arguments?.getLong("movieId") ?: -1L
-                DetailMovieScreen(
-                    movieId = id,
+                val id = it.arguments?.getLong("id") ?: -1L
+                val contentType = it.arguments?.getString("contentType") ?: ""
+                DetailScreen(
+                    id = id,
+                    contentType = contentType,
                     navigateBack = {
                         navController.navigateUp()
                     },

@@ -1,4 +1,4 @@
-package com.ahmaddudayef.moviescompose.ui.screens.movie
+package com.ahmaddudayef.moviescompose.ui.screens.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -49,14 +49,16 @@ import coil.compose.AsyncImage
 import com.ahmaddudayef.moviescompose.R
 import com.ahmaddudayef.moviescompose.data.Constants
 import com.ahmaddudayef.moviescompose.domain.model.Movie
+import com.ahmaddudayef.moviescompose.domain.model.TvShow
 import com.ahmaddudayef.moviescompose.ui.common.UiState
 import com.ahmaddudayef.moviescompose.ui.components.ErrorScreen
+import com.ahmaddudayef.moviescompose.utils.ContentType
 
 @Composable
-fun MovieScreen(
+fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: MovieViewModel = hiltViewModel(),
-    navigateToDetail: (Long) -> Unit,
+    viewModel: HomeViewModel = hiltViewModel(),
+    navigateToDetail: (Long, String) -> Unit,
 ) {
     val selectedTab = remember { mutableStateOf(0) }
     val tabs = listOf(
@@ -85,8 +87,8 @@ fun MovieScreen(
 
 @Composable
 fun MovieContentScreen(
-    viewModel: MovieViewModel,
-    navigateToDetail: (Long) -> Unit,
+    viewModel: HomeViewModel,
+    navigateToDetail: (Long, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val movieState by viewModel.movieState.collectAsStateWithLifecycle()
@@ -123,18 +125,47 @@ fun MovieContentScreen(
 
 @Composable
 fun TvShowContentScreen(
-    viewModel: MovieViewModel,
-    navigateToDetail: (Long) -> Unit,
+    viewModel: HomeViewModel,
+    navigateToDetail: (Long, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Text(text = "Tv Show Content Screen")
+    val tvShowState by viewModel.tvShowState.collectAsStateWithLifecycle()
+    when (tvShowState) {
+        is UiState.Loading -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(24.dp)
+            ) {
+                CircularProgressIndicator()
+            }
+            viewModel.fetchTvShows()
+        }
+
+        is UiState.Success -> {
+            TvShowContent(
+                (tvShowState as UiState.Success<List<TvShow>>).data,
+                modifier = modifier,
+                navigateToDetail,
+            )
+        }
+
+        is UiState.Error -> {
+            ErrorScreen(
+                errorMessage = (tvShowState as UiState.Error).errorMessage,
+                onRetry = { viewModel.fetchTvShows() },
+                modifier = modifier
+            )
+        }
+    }
 }
 
 @Composable
 private fun MovieContent(
     listMovie: List<Movie>,
     modifier: Modifier = Modifier,
-    navigateToDetail: (Long) -> Unit,
+    navigateToDetail: (Long, String) -> Unit,
 ) {
     val visibleState = remember {
         MutableTransitionState(false).apply {
@@ -170,7 +201,55 @@ private fun MovieContent(
                             initialOffsetY = { it * (index + 1) } // staggered entrance,
                         ))
                         .clickable {
-                            navigateToDetail(movie.id.toLong())
+                            navigateToDetail(movie.id.toLong(), ContentType.MOVIE)
+                        }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TvShowContent(
+    listTvShow: List<TvShow>,
+    modifier: Modifier = Modifier,
+    navigateToDetail: (Long, String) -> Unit,
+) {
+    val visibleState = remember {
+        MutableTransitionState(false).apply {
+            // Start the animation immediately.
+            targetState = true
+        }
+    }
+
+    // Fade in entry animation for the entire list
+    AnimatedVisibility(
+        visibleState = visibleState,
+        enter = fadeIn(
+            animationSpec = spring(dampingRatio = DampingRatioLowBouncy)
+        ),
+        exit = fadeOut(),
+    ) {
+        LazyColumn(
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = modifier.testTag("MovieList")
+        ) {
+            itemsIndexed((listTvShow)) { index, tvShow ->
+                MovieItem(title = tvShow.title,
+                    rating = tvShow.rating.toString(),
+                    posterUrl = tvShow.posterUrl,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp, vertical = 8.dp)
+                        .animateEnterExit(enter = slideInVertically(
+                            animationSpec = spring(
+                                stiffness = StiffnessVeryLow,
+                                dampingRatio = DampingRatioLowBouncy
+                            ),
+                            initialOffsetY = { it * (index + 1) } // staggered entrance,
+                        ))
+                        .clickable {
+                            navigateToDetail(tvShow.id.toLong(), ContentType.TV_SHOW)
                         }
                 )
             }

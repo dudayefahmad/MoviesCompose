@@ -2,8 +2,8 @@ package com.ahmaddudayef.moviescompose.ui.navigation
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
-    object DetailMovie : Screen("movie/{movieId}") {
-        fun createRoute(movieId: Long) = "movie/$movieId"
+    object DetailContent : Screen("content/{id}/{contentType}") {
+        fun createRoute(id: Long, contentType: String) = "content/$id/$contentType"
     }
     object Profile : Screen("profile")
     object Explore: Screen("explore")

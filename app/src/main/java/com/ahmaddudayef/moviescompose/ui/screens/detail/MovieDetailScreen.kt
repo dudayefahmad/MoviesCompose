@@ -38,55 +38,96 @@ import coil.compose.AsyncImage
 import com.ahmaddudayef.moviescompose.R
 import com.ahmaddudayef.moviescompose.data.Constants
 import com.ahmaddudayef.moviescompose.domain.model.DetailMovie
+import com.ahmaddudayef.moviescompose.domain.model.DetailTvShow
 import com.ahmaddudayef.moviescompose.ui.common.UiState
 import com.ahmaddudayef.moviescompose.ui.components.ErrorScreen
 import com.ahmaddudayef.moviescompose.ui.theme.MoviesComposeTheme
+import com.ahmaddudayef.moviescompose.utils.ContentType
 
 @Composable
-fun DetailMovieScreen(
-    movieId: Long,
+fun DetailScreen(
+    id: Long,
+    contentType: String,
     modifier: Modifier = Modifier,
-    viewModel: MovieDetailViewModel = hiltViewModel(),
+    viewModel: DetailViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
 ) {
-    val detailMovieState by viewModel.detailMovieState.collectAsStateWithLifecycle()
-    when (detailMovieState) {
-        is UiState.Loading -> {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(24.dp)
-            ) {
-                CircularProgressIndicator()
+    if (contentType == ContentType.MOVIE) {
+        val detailMovieState by viewModel.detailMovieState.collectAsStateWithLifecycle()
+        when (detailMovieState) {
+            is UiState.Loading -> {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(24.dp)
+                ) {
+                    CircularProgressIndicator()
+                }
+                viewModel.fetchDetailMovie(id)
             }
-            viewModel.fetchDetailMovie(movieId)
-        }
 
-        is UiState.Success -> {
-            val data = (detailMovieState as UiState.Success<DetailMovie>).data
-            DetailMovieContent(
-                data.posterUrl,
-                data.title,
-                data.overview,
-                data.releaseDate,
-                data.rating.toString(),
-                onBackClick = navigateBack,
-            )
-        }
+            is UiState.Success -> {
+                val data = (detailMovieState as UiState.Success<DetailMovie>).data
+                DetailContent(
+                    data.posterUrl,
+                    data.title,
+                    data.overview,
+                    data.releaseDate,
+                    data.rating.toString(),
+                    onBackClick = navigateBack,
+                )
+            }
 
-        is UiState.Error -> {
-            ErrorScreen(
-                errorMessage = (detailMovieState as UiState.Error).errorMessage,
-                onRetry = { viewModel.fetchDetailMovie(movieId) },
-                modifier = modifier
-            )
+            is UiState.Error -> {
+                ErrorScreen(
+                    errorMessage = (detailMovieState as UiState.Error).errorMessage,
+                    onRetry = { viewModel.fetchDetailMovie(id) },
+                    modifier = modifier
+                )
+            }
+        }
+    } else {
+        val detailTvShowState by viewModel.detailTvShowState.collectAsStateWithLifecycle()
+
+        when (detailTvShowState) {
+            is UiState.Loading -> {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(24.dp)
+                ) {
+                    CircularProgressIndicator()
+                }
+                viewModel.fetchDetailTvShow(id)
+            }
+
+            is UiState.Success -> {
+                val data = (detailTvShowState as UiState.Success<DetailTvShow>).data
+                DetailContent(
+                    data.posterUrl,
+                    data.title,
+                    data.overview,
+                    data.releaseDate,
+                    data.rating.toString(),
+                    onBackClick = navigateBack,
+                )
+            }
+
+            is UiState.Error -> {
+                ErrorScreen(
+                    errorMessage = (detailTvShowState as UiState.Error).errorMessage,
+                    onRetry = { viewModel.fetchDetailMovie(id) },
+                    modifier = modifier
+                )
+            }
         }
     }
 }
 
 @Composable
-fun DetailMovieContent(
+fun DetailContent(
     posterUrl: String,
     title: String,
     overview: String,
@@ -165,7 +206,7 @@ fun DetailMovieContent(
 @Composable
 fun DetailContentPreview() {
     MoviesComposeTheme() {
-        DetailMovieContent(
+        DetailContent(
             "https://image.tmdb.org/t/p/w500/kqjL17yufvn9OVLyXYpvtyrFfak.jpg",
             "Tom Clancy's Without Remorse",
             "An elite Navy SEAL uncovers an international conspiracy they didn't initially expect ",

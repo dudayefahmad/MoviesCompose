@@ -19,6 +19,8 @@ gson = "2.10.1"
 loggingInterceptor = "4.12.0"
 composeCoil = "2.7.0"
 hiltVersion = "1.2.0"
+mockk = "1.13.13"
+coroutines = "1.9.0"
 
 
 [libraries]
@@ -66,6 +68,10 @@ room-testing = { group = "androidx.room", name = "room-testing", version.ref = "
 
 # image
 compose-coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "composeCoil" }
+
+# mock
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk"}
+coroutinesTest = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

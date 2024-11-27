@@ -22,7 +22,8 @@ class DetailViewModel @Inject constructor(
 
     private val _detailMovieState: MutableStateFlow<UiState<DetailMovie>> =
         MutableStateFlow(UiState.Loading)
-    val detailMovieState: StateFlow<UiState<DetailMovie>> get() = _detailMovieState
+    val detailMovieState: StateFlow<
+            UiState<DetailMovie>> get() = _detailMovieState
 
     private val _detailTvShowState: MutableStateFlow<UiState<DetailTvShow>> =
         MutableStateFlow(UiState.Loading)
